@@ -1,0 +1,23 @@
+baseURL = "https://my-blog.pages.dev/"
+languageCode = "ja"
+title = "マイブログ"
+theme = "PaperMod"
+defaultContentLanguage = "ja"
+
+[params]
+  description = "マイブログ"
+  ShowReadingTime = true
+  ShowPostNavLinks = true
+  ShowBreadCrumbs = true
+  ShowCodeCopyButtons = true
+  ShowShareButtons = false
+
+[menu]
+  [[menu.main]]
+    name = "ホーム"
+    url = "/"
+    weight = 1
+  [[menu.main]]
+    name = "記事一覧"
+    url = "/posts/"
+    weight = 2
