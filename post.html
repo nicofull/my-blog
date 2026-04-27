@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>記事を書く</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Helvetica Neue', sans-serif;
+      background: #fff8f5;
+      color: #5a4a4a;
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+    .container {
+      width: 100%;
+      max-width: 680px;
+    }
+    h1 {
+      font-size: 1.4rem;
+      font-weight: 500;
+      color: #c4828a;
+      margin-bottom: 32px;
+      text-align: center;
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      color: #9e8585;
+      margin-bottom: 6px;
+      margin-top: 20px;
+    }
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #f0e0d8;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: inherit;
+      color: #5a4a4a;
+      background: #fff;
+      outline: none;
+      transition: border 0.2s;
+    }
+    input[type="text"]:focus, textarea:focus {
+      border-color: #c4828a;
+    }
+    textarea {
+      height: 280px;
+      resize: vertical;
+      line-height: 1.8;
+    }
+    .photo-area {
+      border: 2px dashed #f0e0d8;
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      background: #fff;
+      transition: border 0.2s;
+    }
+    .photo-area:hover { border-color: #c4828a; }
+    .photo-area p { color: #c0aaaa; font-size: 0.9rem; }
+    #photo-preview {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-top: 12px;
+      display: none;
+    }
+    #file-input { display: none; }
+    .btn {
+      width: 100%;
+      padding: 16px;
+      background: #c4828a;
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 1.05rem;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 32px;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #b57078; }
+    .btn:disabled { background: #e0c0c4; cursor: not-allowed; }
+    #status {
+      margin-top: 16px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #9e8585;
+      min-height: 24px;
+    }
+    .success { color: #7aaa8a !important; font-weight: 500; }
+    .error { color: #e07070 !important; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>✏️ 新しい記事を書く</h1>
+
+    <label>タイトル</label>
+    <input type="text" id="title" placeholder="例：裏草津 蕩 宿泊記録">
+
+    <label>本文</label>
+    <textarea id="body" placeholder="記事の内容を書いてください..."></textarea>
+
+    <label>写真（任意）</label>
+    <div class="photo-area" onclick="document.getElementById('file-input').click()">
+      <p>クリックして写真を選ぶ</p>
+      <img id="photo-preview">
+    </div>
+    <input type="file" id="file-input" accept="image/*">
+
+    <button class="btn" onclick="publish()">ブログに投稿する</button>
+    <div id="status"></div>
+  </div>
+
+  <script>
+    let selectedFile = null;
+
+    document.getElementById('file-input').addEventListener('change', function(e) {
+      selectedFile = e.target.files[0];
+      if (selectedFile) {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          const img = document.getElementById('photo-preview');
+          img.src = ev.target.result;
+          img.style.display = 'block';
+          document.querySelector('.photo-area p').textContent = selectedFile.name;
+        };
+        reader.readAsDataURL(selectedFile);
+      }
+    });
+
+    function publish() {
+      const title = document.getElementById('title').value.trim();
+      const body = document.getElementById('body').value.trim();
+      if (!title) { alert('タイトルを入力してください'); return; }
+      if (!body) { alert('本文を入力してください'); return; }
+
+      const btn = document.querySelector('.btn');
+      const status = document.getElementById('status');
+      btn.disabled = true;
+      status.textContent = '投稿中...';
+      status.className = '';
+
+      const now = new Date();
+      const date = now.toISOString().split('T')[0];
+      const slug = 'post-' + Date.now();
+      const photoLine = selectedFile ? `\n![写真](/${selectedFile.name})\n` : '';
+
+      const content = `---\ntitle: "${title}"\ndate: ${date}\ndraft: false\n---\n${photoLine}\n${body}`;
+
+      fetch('http://localhost:3456/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug, content, photo: selectedFile ? selectedFile.name : null, photoData: selectedFile ? document.getElementById('photo-preview').src : null })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.ok) {
+          status.textContent = '✓ 投稿しました！数分後にブログに反映されます。';
+          status.className = 'success';
+          document.getElementById('title').value = '';
+          document.getElementById('body').value = '';
+          document.getElementById('photo-preview').style.display = 'none';
+          document.querySelector('.photo-area p').textContent = 'クリックして写真を選ぶ';
+          selectedFile = null;
+        } else {
+          throw new Error(data.error);
+        }
+      })
+      .catch(() => {
+        status.textContent = 'エラーが発生しました。サーバーが起動しているか確認してください。';
+        status.className = 'error';
+      })
+      .finally(() => { btn.disabled = false; });
+    }
+  </script>
+</body>
+</html>
