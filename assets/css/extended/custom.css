@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&family=Zen+Kaku+Gothic+New:wght@300;400&display=swap');
+
+:root {
+    --theme: #fff8f5;
+    --entry: #ffffff;
+    --primary: #5a4a4a;
+    --secondary: #9e8585;
+    --border: #f0e0d8;
+    --code-bg: #fff0ea;
+    --header-height: 60px;
+    --gap: 24px;
+}
+
+body {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    background-color: #fff8f5;
+    color: #5a4a4a;
+}
+
+.main {
+    max-width: 720px;
+}
+
+/* ヘッダー */
+.header {
+    background: rgba(255, 248, 245, 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #f0e0d8;
+}
+
+.logo a {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: #c4828a !important;
+    letter-spacing: 0.05em;
+}
+
+/* ナビゲーション */
+.nav a {
+    color: #9e8585 !important;
+    font-size: 0.9rem;
+}
+
+.nav a:hover {
+    color: #c4828a !important;
+}
+
+/* 記事カード */
+.post-entry {
+    border-radius: 16px;
+    border: 1px solid #f5e8e4;
+    background: #ffffff;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 12px rgba(196, 130, 138, 0.06);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.post-entry:hover {
+    box-shadow: 0 4px 20px rgba(196, 130, 138, 0.12);
+    transform: translateY(-2px);
+}
+
+.entry-header h2 {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: #5a4a4a;
+}
+
+.entry-content p {
+    color: #9e8585;
+    font-size: 0.92rem;
+    line-height: 1.8;
+}
+
+/* 記事ページ */
+.post-title {
+    font-size: 1.6rem;
+    font-weight: 500;
+    color: #5a4a4a;
+    line-height: 1.6;
+}
+
+.post-content {
+    line-height: 2;
+    font-size: 0.97rem;
+    color: #5a4a4a;
+}
+
+.post-content h2 {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #c4828a;
+    border-bottom: 2px solid #f5e8e4;
+    padding-bottom: 6px;
+    margin-top: 2.5rem;
+}
+
+.post-content h3 {
+    font-size: 1.05rem;
+    color: #a06870;
+}
+
+/* リンク */
+.post-content a {
+    color: #c4828a;
+    text-decoration: underline;
+    text-decoration-color: #f0c8cc;
+}
+
+/* フッター */
+.footer {
+    color: #c0aaaa;
+    font-size: 0.82rem;
+}
+
+/* 日付・メタ情報 */
+.post-meta {
+    color: #c0aaaa;
+    font-size: 0.82rem;
+}
+
+/* ダークモードボタンを非表示 */
+#theme-toggle {
+    display: none;
+}
+
+/* 画像 */
+.post-content img {
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    margin: 1.5rem auto;
+    display: block;
+    max-width: 100%;
+}
